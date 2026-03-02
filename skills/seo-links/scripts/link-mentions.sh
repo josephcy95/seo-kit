@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # link-mentions.sh — Find unlinked brand mentions
-set -euo pipefail
+set -e
 
 BRAND="${1:?Usage: link-mentions.sh <brand-name> <your-domain>}"
 DOMAIN="${2:?Usage: link-mentions.sh <brand-name> <your-domain>}"
@@ -9,7 +9,7 @@ echo "🔍 Finding unlinked mentions of: $BRAND (excluding $DOMAIN)"
 
 if [[ -n "${DATAFORSEO_LOGIN:-}" && -n "${DATAFORSEO_PASSWORD:-}" ]]; then
   # Use DataForSEO SERP API to find mentions
-  RESPONSE=$(curl -s -X POST "https://api.dataforseo.com/v3/serp/google/organic/live/advanced" \
+  RESPONSE=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)" -X POST "https://api.dataforseo.com/v3/serp/google/organic/live/advanced" \
     -u "${DATAFORSEO_LOGIN}:${DATAFORSEO_PASSWORD}" \
     -H "Content-Type: application/json" \
     -d "[{

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # link-mine.sh — Mine competitor backlinks via DataForSEO or web search fallback
-set -euo pipefail
+set -e
 
 COMPETITOR="${1:?Usage: link-mine.sh <competitor-domain> [--limit 50]}"
 LIMIT=50
@@ -19,7 +19,7 @@ echo "🔗 Mining backlinks for: $COMPETITOR (limit: $LIMIT)"
 if [[ -n "${DATAFORSEO_LOGIN:-}" && -n "${DATAFORSEO_PASSWORD:-}" ]]; then
   echo "Using DataForSEO Backlinks API..."
   
-  RESPONSE=$(curl -s -X POST "https://api.dataforseo.com/v3/backlinks/backlinks/live" \
+  RESPONSE=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)" -X POST "https://api.dataforseo.com/v3/backlinks/backlinks/live" \
     -u "${DATAFORSEO_LOGIN}:${DATAFORSEO_PASSWORD}" \
     -H "Content-Type: application/json" \
     -d "[{

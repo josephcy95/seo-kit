@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # link-internal.sh — Audit internal link structure
-set -euo pipefail
+set -e
 
 DOMAIN="${1:?Usage: link-internal.sh <your-domain> [--sitemap URL]}"
 SITEMAP="${3:-https://${DOMAIN}/sitemap.xml}"
@@ -11,12 +11,12 @@ echo "Sitemap: $SITEMAP"
 # Fetch sitemap and extract URLs
 echo ""
 echo "Fetching sitemap..."
-URLS=$(curl -sL "$SITEMAP" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -50)
+URLS=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L "$SITEMAP" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -50)
 
 if [[ -z "$URLS" ]]; then
   echo "No sitemap found or empty. Trying sitemap_index..."
-  URLS=$(curl -sL "$SITEMAP" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -5 | while read -r SUB; do
-    curl -sL "$SUB" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -20
+  URLS=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L "$SITEMAP" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -5 | while read -r SUB; do
+    curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L "$SUB" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -20
   done)
 fi
 
@@ -42,7 +42,7 @@ while IFS= read -r PAGE; do
 done <<< "$URLS"
 
 while IFS= read -r PAGE; do
-  BODY=$(curl -sL --max-time 10 "$PAGE" 2>/dev/null)
+  BODY=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L --max-time 10 "$PAGE" 2>/dev/null)
   INTERNAL_LINKS=$(echo "$BODY" | grep -oP "href=\"\K[^\"]*" | grep -E "^/|^https://${DOMAIN}" | sed "s|https://${DOMAIN}||" | sort -u)
   
   SLUG=$(echo "$PAGE" | sed "s|https://${DOMAIN}||")

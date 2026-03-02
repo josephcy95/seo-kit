@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # health-images.sh — Image optimization audit
-set -euo pipefail
+set -e
 
 DOMAIN="${1:?Usage: health-images.sh <domain> [--pages 10]}"
 PAGES="${3:-10}"
@@ -10,7 +10,7 @@ echo "======================================"
 
 # Get top pages from sitemap
 SITEMAP="https://${DOMAIN}/sitemap.xml"
-URLS=$(curl -sL "$SITEMAP" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -"$PAGES")
+URLS=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L "$SITEMAP" 2>/dev/null | grep -oP '<loc>\K[^<]+' | head -"$PAGES")
 
 [[ -z "$URLS" ]] && { echo "No sitemap found. Checking homepage only."; URLS="https://${DOMAIN}"; }
 
@@ -26,7 +26,7 @@ while IFS= read -r PAGE; do
   SLUG=$(echo "$PAGE" | sed "s|https://${DOMAIN}||")
   [[ -z "$SLUG" ]] && SLUG="/"
   
-  BODY=$(curl -sL --max-time 10 "$PAGE" 2>/dev/null)
+  BODY=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)"L --max-time 10 "$PAGE" 2>/dev/null)
   
   # Find all images
   IMAGES=$(echo "$BODY" | grep -oP '<img[^>]+>' | head -20)

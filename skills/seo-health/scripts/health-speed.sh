@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # health-speed.sh — PageSpeed Insights + Core Web Vitals check
-set -euo pipefail
+set -e
 
 URL="${1:?Usage: health-speed.sh <url> [--mobile|--desktop|--both]}"
 STRATEGY="${2:---both}"
@@ -13,7 +13,7 @@ check_speed() {
   
   echo "📱 Checking ${strategy}..."
   local response
-  response=$(curl -s "$api_url")
+  response=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)" "$api_url")
   
   # Core Web Vitals from field data
   local lcp inp cls

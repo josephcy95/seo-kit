@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # link-prospect.sh — Find resource pages to get listed on
-set -euo pipefail
+set -e
 
 KEYWORD="${1:?Usage: link-prospect.sh <niche-keyword> [--limit 20]}"
 LIMIT="${3:-20}"
@@ -19,7 +19,7 @@ if [[ -n "${DATAFORSEO_LOGIN:-}" && -n "${DATAFORSEO_PASSWORD:-}" ]]; then
   for Q in "${QUERIES[@]}"; do
     echo ""
     echo "--- Query: $Q ---"
-    RESPONSE=$(curl -s -X POST "https://api.dataforseo.com/v3/serp/google/organic/live/advanced" \
+    RESPONSE=$(curl -s -A "Mozilla/5.0 (compatible; SEOKit/1.0)" -X POST "https://api.dataforseo.com/v3/serp/google/organic/live/advanced" \
       -u "${DATAFORSEO_LOGIN}:${DATAFORSEO_PASSWORD}" \
       -H "Content-Type: application/json" \
       -d "[{
